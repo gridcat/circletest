@@ -1,0 +1,104 @@
+version: 2.1
+
+parameters:
+  # This parameter is used to trigger the main workflow
+  trigger:
+    type: boolean
+    default: true
+
+  # A parameter per package
+  p1:
+    type: boolean
+    default: false
+  p2:
+    type: boolean
+    default: false
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:14
+
+jobs:
+  trigger-workflows:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Trigger workflows
+          command: chmod +x .circleci/trigger.js && .circleci/trigger.js
+
+  build:
+    parameters:
+      package_name:
+        type: string
+
+    executor: node
+    working_directory: ~/project/packages/<< parameters.package_name >>
+
+    steps:
+      - checkout:
+          path: ~/project
+      # This step is added only to show that we are in the package directory
+      - run:
+          name: Content 
+          command: |
+            cat README.md 
+            echo "<< parameters.package_name >> built." > build.txt
+      - run:
+          name: Build
+          command: echo "Build << parameters.package_name >> ..."
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - packages/<< parameters.package_name >>
+    
+  test:
+    parameters:
+      package_name:
+        type: string
+
+    executor: node
+    working_directory: ~/project/packages/<< parameters.package_name >>
+
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - info:
+          name: Info
+          command: echo "Testing << parameters.package_name >> ..."
+      - test:
+          name: Test
+          command: npm run test
+
+workflows:
+  version: 2
+
+  ci:
+    when: << pipeline.parameters.trigger >>
+    jobs:
+      - trigger-workflows
+
+  p1:
+    when: << pipeline.parameters.p1 >>
+    jobs:
+      - build:
+          name: p1-build
+          package_name: p1
+      - test:
+          name: p1-test
+          package_name: p1
+          requires:
+            - p1-build
+
+  p2:
+    when: << pipeline.parameters.p2 >>
+    jobs:
+      - build:
+          name: p2-build
+          package_name: p2
+      - test:
+          name: p2-test
+          package_name: p2
+          requires:
+            - p2-build
