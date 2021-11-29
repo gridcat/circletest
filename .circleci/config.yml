@@ -67,7 +67,7 @@ jobs:
       - run:
           name: Info
           command: echo "Testing << parameters.package_name >> ..."
-      - test:
+      - run:
           name: Test
           command: npm run test
 
