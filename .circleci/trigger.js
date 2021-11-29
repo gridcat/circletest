@@ -63,7 +63,7 @@ async function main() {
     
   }
 
-  console.log(changeOutput)
+  console.log(changeOutput, slugAndBuildNumber)
 }
 
 main();
