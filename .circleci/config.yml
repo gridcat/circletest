@@ -64,7 +64,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - info:
+      - run:
           name: Info
           command: echo "Testing << parameters.package_name >> ..."
       - test:
