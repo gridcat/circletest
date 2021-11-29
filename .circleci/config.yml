@@ -25,6 +25,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: lerna
+          command: npm i -g lerna
+      - run:
           name: Trigger workflows
           command: chmod +x .circleci/trigger.js && .circleci/trigger.js
 
