@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { spawn } = require('child_process');
 
-export const requireEnv = (varName) => {
+const requireEnv = (varName) => {
   const value = process.env[varName]
   if (!value) {
     throw new Error(`Environment variable ${varName} must be set`)
