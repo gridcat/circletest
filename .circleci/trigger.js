@@ -44,7 +44,7 @@ const spawnGetStdout = (cmd, args) => {
 
 async function main() {
   const changeOutput = (
-    await spawnGetStdout('npx lerna', [
+    await spawnGetStdout('lerna', [
       'list',
       '--parseable',
       '--all',
